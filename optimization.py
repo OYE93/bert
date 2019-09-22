@@ -68,6 +68,11 @@ def create_optimizer(loss, init_lr, num_train_steps, num_warmup_steps, use_tpu):
     optimizer = tf.contrib.tpu.CrossShardOptimizer(optimizer)
 
   tvars = tf.trainable_variables()
+  # add freezing layers
+  # all pretrained weights inside BERT starts with 'bert'
+  # tvars = [tvar for tvar in tvars if not tvar.name.startswith('bert')]
+  # last 20 layers of bert, which is the layer_11 attention
+  # tvars = tvars[-20:]
   grads = tf.gradients(loss, tvars)
 
   # This is how the model was pre-trained.
